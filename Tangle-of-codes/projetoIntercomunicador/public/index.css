@@ -1,0 +1,70 @@
+body{
+    width:800px;
+    margin:0 auto;
+    background-color: #79797949; /* Cor de fundo */
+}
+
+#video{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 1em;
+    width: 100%;
+    padding: 10px;
+}
+
+video{
+    width:100%;
+    border:2px solid greenyellow;
+    background-color: rgb(69, 69, 69);
+    border-radius: 10px; /* Cantos arredondados */
+}
+
+textarea{
+    height: 50px;
+    width: 100%;
+}
+
+.button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column; /* Coloca os elementos em coluna */
+    height: 100vh; /* Ocupa toda a altura da viewport */
+}
+
+button {
+    margin: 10px; /* Adiciona espaço entre os botões */
+    border-radius: 10px;
+}
+
+
+button{
+    width: 15%;
+    border: 0px solid rgb(177, 165, 3);
+    background-color: rgb(69, 69, 69);
+    color: rgb(247, 211, 211);
+    text-align: center;
+}
+
+button:hover {
+    border: 0px solid rgb(253, 238, 19);
+    background-color: rgb(29, 29, 29); /* Cor de fundo ao passar o mouse */
+}
+
+button:active {
+    width: 15%;
+    border: 0px solid rgb(255, 238, 0);
+    background-color: rgb(69, 69, 69);
+    color: rgb(253, 238, 19);
+    text-align: center;
+}
+
+.button, #video {
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1); /* Sombra */
+}
+
+@media screen and (max-width:800px) {
+    body{
+        width:100%;
+    }
+}

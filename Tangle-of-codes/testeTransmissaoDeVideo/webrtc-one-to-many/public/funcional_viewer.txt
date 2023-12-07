@@ -1,0 +1,130 @@
+/// JS
+window.onload = () => {
+    document.getElementById('start-button').onclick = () => {
+        init();
+    }
+    
+}
+
+async function init() {
+    const peer = createPeer();
+    peer.addTransceiver("video", { direction: "recvonly" })
+    peer.addTransceiver("audio", { direction: "recvonly" })
+}
+
+function createPeer() {
+    const peer = new RTCPeerConnection({
+        iceServers: [
+            {
+                urls: "stun:stun.stunprotocol.org"
+            }
+        ]
+    });
+    peer.ontrack = handleTrackEvent;
+    peer.onnegotiationneeded = () => handleNegotiationNeededEvent(peer);
+
+    return peer;
+}
+
+async function handleNegotiationNeededEvent(peer) {
+    const offer = await peer.createOffer();
+    await peer.setLocalDescription(offer);
+    const payload = {
+        sdp: peer.localDescription
+    };
+
+    const { data } = await axios.post('/consumer', payload);
+    const desc = new RTCSessionDescription(data.sdp);
+    peer.setRemoteDescription(desc).catch(e => console.log(e));
+}
+
+function handleTrackEvent(e) {
+    document.getElementById("video").srcObject = e.streams[0];
+    document.getElementById("audio").srcObject = e.streams[0];
+};
+
+
+/////// JS com Funncionalidade de encerrar a stream
+
+window.onload = () => {
+    document.getElementById('start-button').onclick = () => {
+        init();
+    }
+    document.getElementById('stop-button').onclick = () => {
+        stop();
+    }
+}
+
+async function init() {
+    const peer = createPeer();
+    peer.addTransceiver("video", { direction: "recvonly" })
+    peer.addTransceiver("audio", { direction: "recvonly" })
+    document.getElementById('stop-button').disabled = false;
+}
+
+function stop() {
+    document.getElementById("video").srcObject = null; 
+    document.getElementById("audio").srcObject = null; 
+    document.getElementById('stop-button').disabled = true
+}
+
+function createPeer() {
+    const peer = new RTCPeerConnection({
+        iceServers: [
+            {
+                urls: "stun:stun.stunprotocol.org"
+            }
+        ]
+    });
+    peer.ontrack = handleTrackEvent;
+    peer.onnegotiationneeded = () => handleNegotiationNeededEvent(peer);
+
+    return peer;
+}
+
+async function handleNegotiationNeededEvent(peer) {
+    const offer = await peer.createOffer();
+    await peer.setLocalDescription(offer);
+    const payload = {
+        sdp: peer.localDescription
+    };
+
+    const { data } = await axios.post('/consumer', payload);
+    const desc = new RTCSessionDescription(data.sdp);
+    peer.setRemoteDescription(desc).catch(e => console.log(e));
+}
+
+function handleTrackEvent(e) {
+    document.getElementById("video").srcObject = e.streams[0];
+    document.getElementById("audio").srcObject = e.streams[0];
+};
+
+
+
+
+/// HTML 
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Viewer</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+    <script src='viewer.js'></script>  
+</head>
+<body>
+    <h1>Viewer</h1>
+
+    <div>
+        <button onclick="document.getElementById('audio').play()">Unmute</button>
+        <button onclick="document.getElementById('audio').pause()">Mute</button>
+        <button onclick="document.getElementById('audio').volume+=0.1">Aumentar volume</button>
+        <button onclick="document.getElementById('audio').volume-=0.1">Diminuir volume</button>
+      </div>
+
+    <video autoplay id="video" muted></video>
+    <audio id="audio" autoplay="autoplay" controls="controls"></audio>
+    <button id="start-button">View - Stream</button>
+</body>
+</html>

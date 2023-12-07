@@ -1,0 +1,122 @@
+let audio // Se baseando no let stream do arquivo index.js
+
+window.onload = () => {
+    document.getElementById('start-button2').onclick = () => {
+        init();
+    }
+    document.getElementById('stop-button2').onclick = () => {
+        stop();
+    }
+}
+
+async function init() {
+    //Com base no arquivo index.js
+    audio= await navigator.mediaDevices.getUserMedia({audio: true});
+    document.getElementById("audio").srcObject = audio;
+
+    const peer = createPeer();
+    peer.addTransceiver("audio", { direction: "sendrecv" }); // Adiciona transceptor de áudio
+    peer.addTransceiver("video", { direction: "recvonly" }); // Adiciona transceptor de vídeo
+
+    //Com base no arquivo index.js
+    audio.getTracks().forEach(track => peer.addTrack(track, audio));
+    document.getElementById('stop-button2').disabled = false;
+}
+
+//funcao que permite encerrar a stream
+function stop() {
+    audio.getTracks().forEach(track => track.stop()); // Para todos os tracks da stream
+    document.getElementById("audio").srcObject = null; // Remove a stream do vídeo
+    document.getElementById('stop-button2').disabled = true; // Desabilita o botão de parar
+
+}
+
+
+function createPeer() {
+    const peer = new RTCPeerConnection({
+        iceServers: [
+            {
+                urls: "stun:stun.stunprotocol.org"
+            }
+        ]
+    });
+    peer.ontrack = handleTrackEvent;
+    peer.onnegotiationneeded = () => handleNegotiationNeededEvent(peer);
+
+    return peer;
+}
+
+async function handleNegotiationNeededEvent(peer) {
+    const offer = await peer.createOffer();
+    await peer.setLocalDescription(offer);
+    const payload = {
+        sdp: peer.localDescription
+    };
+
+    const { data } = await axios.post('/consumer', payload);
+    const desc = new RTCSessionDescription(data.sdp);
+    peer.setRemoteDescription(desc).catch(e => console.log(e));
+}
+
+function handleTrackEvent(e) {
+    document.getElementById("video").srcObject = e.streams[0];
+    document.getElementById("audio").srcObject = e.streams[0];
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+////////////// Codigo padrao
+
+window.onload = () => {
+    document.getElementById('start-button2').onclick = () => {
+        init();
+    }
+}
+
+async function init() {
+    const peer = createPeer();
+    peer.addTransceiver("audio", { direction: "recvonly" }); // Adiciona transceptor de áudio
+    peer.addTransceiver("video", { direction: "recvonly" }); // Adiciona transceptor de vídeo
+}
+
+
+function createPeer() {
+    const peer = new RTCPeerConnection({
+        iceServers: [
+            {
+                urls: "stun:stun.stunprotocol.org"
+            }
+        ]
+    });
+    peer.ontrack = handleTrackEvent;
+    peer.onnegotiationneeded = () => handleNegotiationNeededEvent(peer);
+
+    return peer;
+}
+
+async function handleNegotiationNeededEvent(peer) {
+    const offer = await peer.createOffer();
+    await peer.setLocalDescription(offer);
+    const payload = {
+        sdp: peer.localDescription
+    };
+
+    const { data } = await axios.post('/consumer', payload);
+    const desc = new RTCSessionDescription(data.sdp);
+    peer.setRemoteDescription(desc).catch(e => console.log(e));
+}
+
+function handleTrackEvent(e) {
+    document.getElementById("video").srcObject = e.streams[0];
+    document.getElementById("audio").srcObject = e.streams[0];
+};

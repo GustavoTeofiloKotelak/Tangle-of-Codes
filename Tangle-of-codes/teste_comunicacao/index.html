@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Transmissão de Áudio</title>
+</head>
+<body>
+  <h1>Pressione e segure o botão para falar</h1>
+  <button id="botao">Pressione-me</button>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.0/socket.io.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const socket = io();
+
+      let mediaRecorder;
+      let audioChunks = [];
+
+      const botao = document.getElementById('botao');
+      botao.addEventListener('mousedown', startRecording);
+      botao.addEventListener('mouseup', stopRecording);
+
+      function startRecording() {
+        mediaRecorder = new MediaRecorder(stream);
+        audioChunks = [];
+
+        mediaRecorder.ondataavailable = (event) => {
+          if (event.data.size > 0) {
+            audioChunks.push(event.data);
+          }
+        };
+
+        mediaRecorder.start();
+      }
+
+      function stopRecording() {
+        mediaRecorder.stop();
+
+        const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+        const audioData = URL.createObjectURL(audioBlob);
+
+        socket.emit('audio', audioData);
+      }
+    });
+  </script>
+</body>
+</html>

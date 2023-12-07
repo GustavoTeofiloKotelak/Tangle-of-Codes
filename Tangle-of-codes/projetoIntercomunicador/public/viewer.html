@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Viewer</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+    <script src='viewer.js'></script>  
+    <link rel="stylesheet" href="viewer.css">
+</head>
+<body>
+    <h1>Viewer</h1>
+
+    <div class="button-container">
+        <button onclick="document.getElementById('audio').play()">Unmute</button>
+        <button onclick="document.getElementById('audio').pause()">Mute</button>
+        <button onclick="document.getElementById('audio').volume+=0.1">Aumentar volume</button>
+        <button onclick="document.getElementById('audio').volume-=0.1">Diminuir volume</button>
+      
+    </div>
+
+    <video autoplay id="video"></video>
+    <audio id="audio" autoplay="autoplay" controls="controls"></audio>
+    
+    <div class="play-container">
+        <button id="start-button">View - Stream</button>
+        <button id="stop-button">End- Stream</button>
+    </div>
+
+</body>
+</html>
