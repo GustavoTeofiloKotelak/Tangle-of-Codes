@@ -1,0 +1,15 @@
+/* Estilos específicos para o arquivo teste.css */
+
+body {
+  background-color: #f0f0f0; /* Cor de fundo do corpo da página */
+}
+
+.card-title {
+  font-size: 2em; /* Tamanho da fonte do título do cartão */
+}
+
+.btn-large {
+  font-size: 1.2em; /* Tamanho da fonte do botão grande */
+}
+
+/* Adicione outros estilos conforme necessário */
